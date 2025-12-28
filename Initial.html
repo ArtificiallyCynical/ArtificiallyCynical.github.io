@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Somewhere, somewhen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { min-height:100vh; font-family: 'Inter', sans-serif; background:#000; color:#fff; overflow:hidden; }
+
+  .preview {
+    position: fixed;
+    inset:0;
+    background:url('https://wallpaperaccess.com/full/656620.gif') center/cover no-repeat;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+    transition: opacity 1s ease;
+  }
+  .overlay { position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.75)); }
+  .title-container { position:relative; z-index:1; text-align:center; padding:2rem; animation:fadeUp 1.6s ease forwards; }
+  h1 { font-family: 'Playfair Display', serif; font-size:clamp(2.4rem,6vw,4rem); font-weight:700; letter-spacing:0.04em; margin-bottom:1.2rem; text-shadow:0 10px 40px rgba(0,0,0,0.8);}
+  .subtitle { font-size:0.95rem; letter-spacing:0.25em; text-transform:uppercase; opacity:0.75; margin-bottom:3rem; }
+  .enter { font-size:0.85rem; letter-spacing:0.3em; text-transform:uppercase; opacity:0.6; cursor:pointer; transition:opacity 0.3s ease;}
+  .enter:hover { opacity:1; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+
+  .letter-scene {
+    position: fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    padding:3rem 1.5rem;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity 1s ease, background 1s ease;
+  }
+  .letter-scene.visible { opacity:1; pointer-events:auto; }
+
+  .letter-title {
+    font-family: 'Playfair Display', serif;
+    font-size:2.2rem;
+    font-weight:700;
+    margin-bottom:2rem;
+    text-align:center;
+    text-shadow: 0 5px 20px rgba(0,0,0,0.7);
+    transition: opacity 0.8s ease;
+  }
+
+  .letter-body p {
+    font-family: 'Inter', sans-serif;
+    font-size:1.1rem;
+    line-height:1.8;
+    margin-bottom:1.5rem;
+    opacity:0;
+    transform: translateY(15px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    text-align:center;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    display:block;
+  }
+  .letter-body p.visible {
+    opacity:1;
+    transform: translateY(0);
+  }
+
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-2px); }
+    40% { transform: translateX(2px); }
+    60% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+    100% { transform: translateX(0); }
+  }
+  .shake {
+    display:inline-block;
+    animation: shake 0.5s ease 1;
+  }
+</style>
+</head>
+<body>
+
+<section class="preview">
+  <div class="overlay"></div>
+  <div class="title-container">
+    <h1>Somewhere, somewhen</h1>
+    <div class="subtitle">to whom they are concerned</div>
+    <div class="enter">open the letter</div>
+  </div>
+</section>
+
+<section class="letter-scene">
+  <h2 class="letter-title">To the princess reading this</h2>
+  <div class="letter-body"></div>
+</section>
+
+<script>
+const enter = document.querySelector('.enter');
+const preview = document.querySelector('.preview');
+const letterScene = document.querySelector('.letter-scene');
+const letterBody = document.querySelector('.letter-body');
+const letterTitle = document.querySelector('.letter-title');
+
+const fullLetter = [
+  { text: "Have you ever thought about what it would be like to see the world from a different perspective?", effect: "shake", color: "#ff4444" },
+  { text: "How would it feel?", color: "#ffee66" },
+  { text: "Uncomfortable?", color: "#ffffff" },
+  { text: "Awkward?", color: "#aaffaa" },
+  { text: "Exciting?", effect: "shake", color: "#66ffff" },
+  { text: "It seems like I am the same person, but I am not?", color: "#ff99ff" },
+  { text: "Why am I suddenly dumb?", color: "#ffdddd" },
+  { text: "Am I losing my spark slowly?", color: "#ffcc66" },
+  { text: "You might be asking all of these questions, but as you read this—while confused—you'd wonder", color: "#ffffff" },
+  { text: "Why am I asking these questions?", color: "#ffff66" },
+  { text:"I don't know the answers.", effect: "shake", color: "#ff6666" },
+  { text:"But what I do know is", color: "#ffffff" },
+  { text:"It's internal; it's the sense of trying to find yourself again.", color: "#aaffff" },
+  { text:"Your old self? Your new one?", color: "#ffccff" },
+  { text:"To feel comfortable.", color: "#ffffff" },
+  { text:"How comfortable?", color: "#ffee66" },
+  { text:"You feel uncomfortable?", color: "#ffffff" },
+  { text:"What makes you so?", color: "#ff4444" },
+  { text:"Is it yourself?", color: "#ffffff" },
+  { text:"Is it the world around you?", color: "#ffffff" },
+  { text:"Is it the people you surround yourself with?", effect: "shake", color: "#ff6666" },
+  { text:"I hope you find your answers, princess", color: "#ffcc66" },
+  { text:"Because you deserve to be happy.", color: "#aaffaa" },
+  { text:"And comfortable.", color: "#66ffff" },
+
+  // First story section
+  { text:"   ", color:"#ffffff" },
+  { text:"2025 is the temporal container I should stick this letter to. As I try to do that, I want to tell you that I have a bad memory.", color:"#ffffff" },
+  { text:"Will it get worse? You'd hope not.", color:"#ffee66" },
+  { text:"A second semester of uni passed. I studied a lot and met new people, IRL and online.", color:"#ffffff" },
+  { text:"To be honest, my online friends played a huge role in cheering my mood.", color:"#66ffff" },
+  { text:"Anything I missed doing IRL, I did online — love, friendship, venting, flirting, goofing around", color:"#ffccff" },
+  { text:"   ", color:"#ffffff" },
+  { text:"An another surprise this year gave me was you", color:"#ffffff" },
+
+  // Personal notes
+  { text:"You? Yes, you.", color:"#ffff66" },
+  { text:"I wanted to argue with you about anything really.", color:"#ffffff" },
+  { text:"I wanted to hear your voice, your thoughts, your opinions.", color:"#ffffff" },
+  { text:"I wanted to see your expressions, your smiles, your frowns.", color:"#ffffff" },
+  { text:"I wanted to know the real you, beyond the surface.", color:"#aaffff" },
+  { text:"   ", color:"#ffffff" },
+  { text:"Do i have to mention the princess' name?", effect: "shake", color:"#ff4444" },
+  { text:"I think mentioning it directly would feel more personal", color:"#ffffff" },
+
+  // Playful names
+  { text:"   ", color:"#ffffff" },
+  { text:"Ouma?", color:"#ffff66" },
+  { text:"—oh right, you hate getting called that—", color:"#ffffff" },
+  { text:"Ou-may-ma", color:"#aaffff" },
+  { text:"There, I said it.", color:"#ffffff" },
+  { text:"I hope you smile reading this.", color:"#ffccff" },
+  { text:"Because I am smiling writing it.", color:"#66ffff" },
+
+  // Long reflection, split into colored chunks
+  { text:"   ", color:"#ffffff" },
+  { text:"The \"mini\" mother came in my DMs one summer, asking me to be her PFE buddy out of the blue! Why me?", color:"#ff6666" },
+  { text:"Well, I know I am that cool and all, but not great at staying motivated. I know myself.", color:"#ffffff" },
+  { text:"I gladly accepted! You motivated me about being a great team. What a little manipulator", color:"#ffcc66" },
+  { text:"But seriously, it was brave to work with someone else you barely knew instead of conforming to your initial partner in the PFE.", color:"#ffffff" },
+  { text:"Let's not dive deep into PFE details. We’ll spend six months preparing it next year; I don’t want it to take much time in this letter.", color:"#66ffff" },
+  { text:"   ", color:"#ffffff" },
+  { text:"Talking about time, I had plenty this year. I 'wasted' most of it on things that made me happy: watching Friends with you, movies, and lovely chats.", color:"#ffffff" },
+  { text:"Did I spend all my time with you? Of course not. Otherwise, this letter would be called 'Me and Maynou'.", color:"#ffccff" },
+  { text:"Did I enjoy every moment? Can I say yes deliberately? It would be a lie — I might have disliked some things, though I barely recall.", color:"#ffffff" },
+  { text:"We are so different in what we consume from media outlets, which is fine! But sometimes it feels awkward.", color:"#ffee66" },
+  { text:"   ", color:"#ffffff" },
+  { text:"I remember explaining crime and punishment, incelogy, and Islamism on late-night Discord calls. I had fun but wished for your opinions. Nonetheless, I was happy, and you seemed happy too.", color:"#ffffff" },
+  { text:"You gave me your book, White Nights. I kept it hostage to my laziness but eventually read it. What horrid personalities! A complete exaggeration of emotions. Still, it was good.", color:"#aaffff" },
+  { text:"Am I rude? I might come off that way. It’s just because I am critical and cynical.", color:"#ff6666" },
+  { text:"   ", color:"#ffffff" },
+  { text:"I remember when I rushed you to the hospital while you were sobbing after the evaluation. I remember small things: wrapping your finger with a bandaid, buying you food, little acts.", color:"#ffffff" },
+  { text:"We ate tiramisu, pizza, cheesecake, drank hot chocolate, coffee, water — everyone does this, right? We studied together, listened to music, worked together.", color:"#ffcc66" },
+  { text:"And now, as I write this, we are ending this year together.", color:"#66ffff" },
+  { text:"To 2025, I’d say it was good for me. Next year? Things might get worse, but that’s fine; it won’t be me dealing with it.", color:"#ffffff" },
+  { text:"   ", color:"#ffffff" },
+  { text:"All I want now is to wish you a happy New Year, not just for next year, but every year you live, as I probably won’t be there.", color:"#ffffff" },
+  { text:"there is much more to say, but I don’t want to bore you with my uncoherent thoughts and it's already 5am as I am writing this.", color:"#ffffff" },
+  { text:"Take care", color:"#ffccff" }
+];
+
+const backgroundBatches = [
+  { background: 'https://wallpaperaccess.com/full/656620.gif', paragraphs: 12 },
+  { background: 'https://wallpaperaccess.com/full/656620.gif', paragraphs: 13 },
+  { background: 'https://i.imgur.com/kUeTbTv.gif', paragraphs: 6 },
+  { background: 'https://i.pinimg.com/originals/e7/16/55/e7165502b2a1cf61fa81b20e02bad088.gif', paragraphs: 8 },
+  { background: 'https://wallpapercave.com/wp/wp9791473.gif', paragraphs: 10 },
+  { background: 'https://i.pinimg.com/originals/59/04/d5/5904d5e01663bf80006810618cdf7069.gif', paragraphs: 6 },
+  { background: 'https://ipfs.pixura.io/ipfs/QmV8AcVVbXVj6G7TveyQsMc9rJsaX7nsXmGYfaNCRUrpcp/4000x4000__Hakui_By-pass.gif', paragraphs: 5 },
+  { background: 'https://wallpaperaccess.com/full/8351224.gif', paragraphs: 4 },
+  { background: 'https://i.pinimg.com/originals/80/85/36/808536e504da54a3522fcaa2a4e209e7.gif', paragraphs: 5 },
+];
+
+let index = 0;
+let batchIndex = 0;
+let paragraphCounter = 0;
+
+enter.addEventListener('click', () => {
+  preview.style.display = 'none';
+  letterScene.classList.add('visible');
+  document.body.style.overflow = 'auto';
+  letterScene.style.background = `url('${backgroundBatches[batchIndex].background}') center/cover no-repeat`;
+  showNextParagraph();
+});
+
+letterScene.addEventListener('click', () => {
+  showNextParagraph();
+});
+
+function showNextParagraph() {
+  if(index >= fullLetter.length) return;
+
+  const paraData = fullLetter[index];
+  const p = document.createElement('p');
+
+  p.textContent = paraData.text;
+  if(paraData.color) p.style.color = paraData.color;
+  if(paraData.effect === "shake") p.classList.add('shake');
+
+  letterBody.appendChild(p);
+  setTimeout(() => { p.classList.add('visible'); }, 50);
+
+  index++;
+  paragraphCounter++;
+
+  if(paragraphCounter >= backgroundBatches[batchIndex].paragraphs){
+    paragraphCounter = 0;
+    batchIndex++;
+    letterBody.innerHTML = '';
+
+    // Hide title after first clear
+    if(batchIndex === 1){
+      letterTitle.style.opacity = 0;
+    }
+
+    if(batchIndex < backgroundBatches.length){
+      letterScene.style.background = `url('${backgroundBatches[batchIndex].background}') center/cover no-repeat`;
+    }
+  }
+}
+</script>
+
+</body>
+</html>
